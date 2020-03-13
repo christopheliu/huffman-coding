@@ -1,7 +1,6 @@
 function out = HuffTree(X)
-[num1,prob1] = myEntropy(X); %#ok<ASGLU>
-
-n = size(X,2);
+[num1, prob1] = myEntropy_original(X);
+n = size(num1,2);
 tree = zeros((2*n)-1,4);
 tree(:,2:4) = -1;
 tree(1:n,1) = num1;

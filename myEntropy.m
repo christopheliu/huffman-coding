@@ -1,13 +1,31 @@
-function [out,outt] = myEntropy(X)
+function [sym, freq,entropy,cr] = myEntropy(X)
 
-inp = double(X);
-s = size(inp,2);
-maxx = max(inp,[],'all');
-x = transpose(1:maxx);
-xx = sum(inp(:).' == x,2);
-for i = 1:s
-   L(i)= xx(inp(i));
+if isa(X,'string') || isa(X,'char')% string input
+    char_arr = char(X);
+    num_arr = double(char_arr);
+    [sym, freq,entropy,cr] = symbol_count(num_arr);
+    bar(freq); set(gca,'xticklabel',num2cell(char(sym)));
+    title('String'); xlabel('symbols');ylabel('freq');
+    saveas(gcf,'./figures/string_hist.png');
+elseif isa(X,'uint8')
+    [sym, freq,entropy,cr] = symbol_count(X);
+    bar(sym,freq);title('Image intensity'); xlabel('symbols');ylabel('freq'); 
+    saveas(gcf,'./figures/img_hist.png');
+else
+    disp("input is not of type string or 8-bit image");
 end
-out = transpose(L);
-outt = transpose(L/s);
+
+    function [sym,freq,entropy,cr] = symbol_count(num_arr)
+        entropy = 0;
+        cr = 789;
+        [sym,jj,kk] = unique(num_arr);
+        freq = accumarray(kk,1);
+        prob = freq/sum(freq);
+        for i=1:numel(prob)
+            entropy = entropy - (prob(i)*log2(prob(i)));
+        end
+        cr = (numel(num_arr)*(8/entropy));
+    end
+
 end
+
